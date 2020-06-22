@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+     <link rel="stylesheet" href="{{url_for('static', filename='booking.css')}}">
+     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+     <script src="{{url_for('static', filename='jsfunc.js')}}"></script>
+     
+</head>
+
+
+<body>
+<div class="container">
+  <div class="jumbotron">
+    <div class="row">
+    	<div class="col-sm-6">
+    		<button type="button" class="btn btn-secondary float-left"  onclick="location.href='/';"> Home</button>
+  		</div>
+  		<div class="col-sm-6">
+  			<div class="btn-group float-right">
+  				<button type="button" onclick="showEdit()"class="btn btn-secondary">Edit Profile</button>
+  				{% for isAdmin in isAdmins %}   
+  					{% if isAdmin["Admin"] == "True" %}	
+  				<button type="button" class="btn btn-secondary" onclick="location.href='/admin';">Administration Menu</button>
+  					{% endif %}
+  				{% endfor %}
+  			</div>
+  		</div>
+  	</div>
+  	<br>
+  	<div class="row">
+   		<h1>Device Booking Program</h1>
+    </div>
+    <div class="row">
+    	<div class="col-sm-12">
+   			<h5 class="text-right">Please select your email:</h5>
+    		<form class="text-right" name="email" action="set_cookie" method="POST">
+    			<select name="email">
+    			<option value='none'> Select an email </option>
+    			{% for semail in semails %}
+       				<option {% if semail["email"] == emailSelected %} selected {% endif %} value="{{semail["email"]}}">{{semail["email"]}}</option>
+       			{% endfor %}
+  				</select>
+    			<input type="submit" class="btn btn-secondary" value="Select" id="submit" />
+    			<br>
+    			<input type="checkbox" name="public" value="TRUE" {% if hasCookie == 'True' %} checked {% endif %}>Remember me? Don't click if public.</input>
+			</form>
+		</div>
+	 </div>
+</div>
+{{msg}} <br>
+<div id="editUser" style="display:none;">
+
+<div class="container">
+    <button type="button" onclick="showEdit()"class="btn btn-secondary float-right">Hide</button>
+    <br>
+    <br>
+    <h4>Edit details for {{emailSelected}}:</h4>
+        <table class = 'table table-hover'>
+               <thead>
+                  <th>Email</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Admin</th>
+                  <th>Office Location</th>
+                  <th >Update Details<th>
+               </thead>
+    
+               {% for sdetail in sdetails %}
+               <form action = "editStafffp" method="POST" >
+                  <tr>
+                     <td> <input  name="email" type="text"  value = '{{sdetail["email"]}}' readonly >   </td>  
+                     <td><input  name="FirstName" type="text"  value = '{{sdetail["FirstName"]}}' > </td>
+                     <td> <input  name="LastName" type="text"  value = '{{sdetail["LastName"]}}' >  </td>
+                     <td > <input  name="Admin" type="text"  value = '{{sdetail["Admin"]}}' readonly> </td>
+                     <td ><input  name="Office_Location" type="text"  value = '{{sdetail["Office_Location"]}}' >  </td>
+                     <td><input class="btn-secondary" type="submit" value="Update"/></td>
+                  </tr>
+                </form>
+               {% endfor %}
+        </table>   
+</div>
+{{msg}} <br>
+</div>
+<br>
+
+<div class="container">
+<h4>Devices for {{emailSelected}}:</h4>
+    <table class = 'table table-hover'>
+           <thead>
+           	  <th>Type</th>
+           	  <th style="display:none;">Type</th>
+           	  <th style="display:none;">Register Number</th>
+          	  <th>Name</th>
+              <th class="leftborderwide">When due back</th>
+              <th>Return</th>
+              <th style="display:none;">Email<th>
+
+           </thead>
+
+           {% for bresult in bresults %}
+           <form action = "checkBack" method="POST" >
+              <tr>
+                 <td>
+              {% if bresult["Device_Type"] == "Phone" %}
+              <i class="fas fa-mobile-alt" title="{{bresult["Device_Type"]}}"></i>
+              {% elif bresult["Device_Type"] == "Laptop" %}
+              <i class="fas fa-laptop" title="{{bresult["Device_Type"]}}"></i>
+              {% elif bresult["Device_Type"] == "Tablet" %}
+              <i class="fas fa-tablet-alt" title="{{bresult["Device_Type"]}}"></i>
+              {% elif bresult["Device_Type"] == "iPod" %}
+   	          <i class="fas fa-headphones-alt" title="{{bresult["Device_Type"]}}"></i>
+              {% else %}
+              <i class="fas fa-question" title="{{bresult["Device_Type"]}}"></i>
+              {% endif %}
+              </td>
+                 <td style="display:none;">{{bresult["Device_Type"]}}</td>
+                 <td style="display:none;"><input name = "Register_Number" value="{{bresult["Register_Number"]}}"></input></td>
+                 <td>{{bresult["nameModel"]}}</td>
+                 <td class="leftborder">
+                 {% if today == (bresult["When_Checkedback"]) %}
+                 <font color="orange">{{bresult["When_Checkedback"]}}:</font>
+                  <font color="black">  Device due back today.</font>
+                 {% elif today > (bresult["When_Checkedback"]) %}
+                 <font color="red">{{bresult["When_Checkedback"]}}:</font>
+                 <font color="black">  Please return the device.</font>
+                 {% else %}
+                 <font color="black">{{bresult["When_Checkedback"]}}</font>
+                 {% endif %}</td>
+                 <td style="display:none;"><input name = "Staff_Email" value="{{emailSelected}}"></input></td>
+                 <td><input class="btn-secondary" type="submit" value="Return"/></td>
+              </tr>
+            </form>
+           {% endfor %}
+        </table>
+</div>
+<br>
+
+
+<div class="container">
+<h4>All Devices:</h4>
+
+<form class="text">
+  <div class="form-row">
+    <div class="col">
+    	<input class="form-control" id="deviceName" type="text" onkeyup="searchDevices(1,7,11)" placeholder="Search devices for...">
+ 	</div>
+    <div class="col text-right">
+    	<label class="pull-right" for="aviable">Only Show Available Devices:</label>
+    	<input type="checkbox" name="hide" id="aviable" onclick="searchDevices(1,7,11)">
+  </div>
+</form>
+<br>
+<br>
+<table id="deviceTable" class="table table-hover table-condensed">
+     <thead>
+      <th><button onclick="sortTable(1)" class="btn" type="button">Type</button></th>
+      <th style="display:none;">Type</th>
+	  <th><button onclick="sortTable(2)" class="btn" type="button">Name</button></th>
+      <th><button onclick="sortTable(3)" class="btn" type="button">OS</button></th>
+      <th><button onclick="sortTable(4)" class="btn" type="button">Ram</button></th>
+      <th><button onclick="sortTable(5)" class="btn" type="button">CPU</button></th>
+      <th><button onclick="sortTable(6)" class="btn" type="button">Screen</button></th>
+      <th class="leftborderwide"><button onclick="sortTable(7)" class="btn" type="button">Location</button></th>
+      <th><button onclick="sortTable(8)" class="btn" type="button">Status</button></th>
+      <th style="display:none;">Staff_Email</th>
+      <th style="display:none;">Device ID</th>
+      <th style="display:none;">Returned</th>
+    </thead>
+
+         {% for dresult in dresults %}
+         <form action = "book" method="POST" >
+            <tr {% if dresult["returned"] == 0 %} class="table-warning" {% endif %}>
+              <td>
+              {% if dresult["Device_Type"] == "Phone" %}
+              <i class="fas fa-mobile-alt" title="{{dresult["Device_Type"]}}"></i>
+              {% elif dresult["Device_Type"] == "Laptop" %}
+              <i class="fas fa-laptop" title="{{dresult["Device_Type"]}}"></i>
+              {% elif dresult["Device_Type"] == "Tablet" %}
+              <i class="fas fa-tablet-alt" title="{{dresult["Device_Type"]}}"></i>
+              {% elif dresult["Device_Type"] == "iPod" %}
+   	          <i class="fas fa-headphones-alt" title="{{dresult["Device_Type"]}}"></i>
+              {% else %}
+              <i class="fas fa-question" title="{{dresult["Device_Type"]}}"></i>
+              {% endif %}
+              </td>
+              <td style="display:none;">{{dresult["Device_Type"]}}</td>
+              <td>{{dresult["nameModel"]}}</td>
+              <td>{{dresult["OS"]}}</td>
+              <td>{{dresult["Device_RAM"]}}</td>
+              <td>{{dresult["Device_CPU_GPU"]}}</td>
+              <td>{{dresult["Device_Screen_Resolution"]}}</td>
+              <td class="leftborder">
+              {% if dresult["returned"] == 0 %}
+              <button type="button" class="btn-link" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="This device is with {{dresult['FirstName']}} {{dresult['LastName']}} at {{dresult['Device_Location']}}. It is due back {{dresult['When_Checkedback']}}.">
+              {{dresult["Device_Location"]}}</button></td>
+              {% else %}
+              <button disabled type="button" class="btn-default">{{dresult["Device_Location"]}}</button></td>
+              {% endif %}
+              <td> {% if dresult["returned"] == 0 %}
+            	<input Disabled class="btn-default" type="submit" value="Checked Out"/>
+            	{% else %}
+            	    {% if emailSelected %}
+            		  {% if emailSelected != 'none' %}
+            		<input class="btn-secondary" type="submit" value="Check out"/>
+            		  {% else %}
+            		<input Disabled class="btn-default" type="submit" value="Please log in"/>
+            		  {% endif %}
+            		{% else %}
+            		<input Disabled class="btn-default" type="submit" value="Please log in"/>
+            	    {% endif %}
+            	{% endif %}</td>
+              <td style="display:none;"><input name = "Staff_Email" value="{{emailSelected}}"></input></td>
+              <td style="display:none;"><input name = "Device_ID" value="{{dresult["Device_ID"]}}"></input></td>
+              <td style="display:none;">{{dresult["returned"]}}</td>
+            </tr>
+          </form>
+         {% endfor %}
+      </table>
+</div>
+
+
+</body>
+
+</html>

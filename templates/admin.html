@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='booking.css')}}">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='jsfunc.js')}}"></script>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="jumbotron">
+            <div class="row">
+    		<div class="col-sm-6">
+    			<button type="button" class="btn btn-secondary float-left"  onclick="location.href='/';"> Home</button>
+  			</div>
+  			<div class="col-sm-6">
+  			<div class="btn-group float-right">
+  				<button type="button" class="btn btn-secondary" onclick="location.href='/addDevice';">Manage Device</button>
+  				<button type="button" onclick="location.href='/editstaff';" class="btn btn-secondary">Manage Staff</button>
+  			</div>
+  			</div>
+  			<div>
+  			  	<br>
+                <h1 class="text-center">Administrator</h1>
+        </div>
+    </div>
+</div>
+
+        <div class='row'>
+
+            {% block content %}
+            {% if 'query_edit' in request.url %}
+
+            <div style='margin-left: 100px; width: 45%;'>
+
+                <h4>Edit the device here:</h4>
+<!=== EDIT DEVICE  ==>
+                <form class="form-control" action="updateSelectedRow" method="POST">
+
+				 {% for eresult in eresults %}
+                    <p>Device ID: <input class="form-control" type="text" name="Device_ID_name" style="width: 100%;" value="{{eresult["Device_ID"]}}" disabled/></p>
+                    <input class="form-control" type="text" name="Device_ID" style="width: 100%;" value="{{eresult["Device_ID"]}}" hidden/>
+                    <p>Device Type: <input class="form-control" type="text" name="Device_Type" style="width: 100%;" value="{{eresult["Device_Type"]}}" /></p>
+                    <p>Device Name: <input class="form-control" type="text" name="Device_Name" style="width: 100%;" value="{{eresult["Device_Name"]}}" /></p>
+                    <p>Device Model: <input class="form-control" type="text" name="Device_Model" style="width: 100%;" value="{{eresult["Device_Model"]}}" /></p>
+                    <p>OS Type: <input class="form-control" type="text" name="OS_Type" style="width: 100%;" value="{{eresult["OS_Type"]}}" /></p>
+                    <p>OS Version: <input class="form-control" type="text" name="OS_Version" style="width: 100%;" value="{{eresult["OS_Version"]}}" /></p>
+                    <p>Device RAM: <input class="form-control" type="text" name="Device_RAM" style="width: 100%;" value="{{eresult["Device_RAM"]}}" /></p>
+                    <p>Device CPU & GPU: <input class="form-control" type="text" name="Device_CPU_GPU" style="width: 100%;" value="{{eresult["Device_CPU_GPU"]}}" /></p>
+                    <p>Device Bit: <input class="form-control" type="text" name="Device_Bit" style="width: 100%;" value="{{eresult["Device_Bit"]}}" /></p>
+                    <p>Device Screen Resolution: <input class="form-control" type="text" name="Device_Screen_Resolution" style="width: 100%;" value="{{eresult["Device_Screen_Resolution"]}}" /></p>
+                    <p>Device Screen PPI: <input class="form-control" type="text" name="Device_Screen_PPI" style="width: 100%;" value="{{eresult["Device_Screen_PPI"]}}" /></p>
+                    <p>Device Grade: <input class="form-control" type="text" name="Device_Grade" style="width: 100%;" value="{{eresult["Device_Grade"]}}" /></p>
+                    <p>Device UUID: <input class="form-control" type="text" name="Device_UUID" style="width: 100%;" value="{{eresult["Device_UUID"]}}" /></p>
+  				{% endfor %}
+                    <br>
+                    <p><input class="btn btn-secondary" type="submit" value="Update Device" /></p>
+                </form>
+
+            </div>
+<!== ADD DEVICE ==>
+            {% elif 'addDevice' in request.url  %}
+
+            <div style='margin-left: 100px; width: 45%;'>
+
+                <h4>Enter a new device here:</h4>
+
+                <form class="form-control" action="addDevice" method="POST">
+                    <p>Device type: * Required<input class="form-control" type="text" name="Device_type" style='width: 100%; ' /></p>
+                    <p>Device name: * Required<input class="form-control" type="text" name="Device_name" style='width: 100%; ' /></p>
+                    <p>Device model: <input class="form-control" type="text" name="model" style='width: 100%; ' /></p>
+                    <p>OS type: <input class="form-control" type="text" name="OS_type" style='width: 100%; ' /></p>
+                    <p>OS version: <input class="form-control" type="text" name="OS_version" style='width: 100%; ' /></p>
+                    <p>Device RAM: <input class="form-control" type="text" name="ram" style='width: 100%; ' /></p>
+                    <p>Device CPU & GPU: <input class="form-control" type="text" name="CPU_GPU" style='width: 100%; ' /></p>
+                    <p>Device bit: <input class="form-control" type="text" name="bit" style='width: 100%; ' /></p>
+                    <p>Device screen resolution: <input class="form-control" type="text" name="reso" style='width: 100%; ' /></p>
+                    <p>Device screen PPI: <input class="form-control" type="text" name="PPI" style='width: 100%; ' /></p>
+                    <p>Device grade: <input class="form-control" type="text" name="grade" style='width: 100%; ' /></p>
+                    <p>Device UUID: <input class="form-control" type="text" name="UUID" style='width: 100%; ' /></p>
+                    <br>
+                    <p><input class="btn btn-secondary" type="submit" value="Submit new device" /></p>
+
+                </form>
+            </div>
+            {% else %}
+            {% endif %}
+            {% endblock content %}
+        </div>
+    </div>
+
+    <br>
+    <div class="container">
+
+        <h4>All Devices:</h4>
+<form class="text">
+  <div class="form-row">
+    <div class="col">
+    	<input class="form-control" id="deviceName" type="text" onkeyup="searchDevices(1,7,18)" placeholder="Search devices for...">
+ 	</div>
+    <div class="col text-right">
+    	<label hidden class="pull-right" for="aviable">Only Show Available Devices:</label>
+    	<input hidden type="checkbox" name="hide" id="aviable" onclick="searchDevices(1,7,18)">
+  </div>
+  <br>
+</form>
+        <br>
+<!== DISPLAY-SELECT DEVICE ==>
+        <div class="table-responsive">
+            <table id="deviceTable" class="table table-hover table-condensed table-striped">
+            <thead>
+                        <th>EDIT</th>
+                        <th>Device ID</th>
+                        <th>Device Type</th>
+                        <th style="display:none;">Device Type</th>
+                        <th>Name - Model</th>
+                        <th>OS</th>
+                        <th>RAM</th>
+                        <th>CPU & GPU</th>
+                        <th>Bit</th>
+                        <th>Screen Specs</th>
+                        <th>Grade</th>
+                </thead>
+
+                {% for dresult in dresults %}
+                <td align="center"><a href="{{ url_for('query_Selected_Row', Selected_Device_ID=dresult['Device_ID']) }}"><i class="fas fa-edit" ></a></td>
+                <td>{{dresult["Device_ID"]}}</td>
+                <td>
+                    {% if dresult["Device_Type"] == "Phone" %}
+                    <i class="fas fa-mobile-alt"></i> {% elif dresult["Device_Type"] == "Laptop" %}
+                    <i class="fas fa-laptop"></i> {% elif dresult["Device_Type"] == "Tablet" %}
+                    <i class="fas fa-tablet-alt"></i> {% elif dresult["Device_Type"] == "iPod" %}
+                    <i class="fas fa-headphones-alt"></i> {% else %}
+                    <i class="fas fa-question"></i> {% endif %}
+                </td>
+                <td style="display:none;">{{dresult["Device_Type"]}}</td>
+                <td>{{dresult["nameModel"]}}</td>
+                <td>{{dresult["os"]}}</td>
+                <td>{{dresult["Device_RAM"]}}</td>
+                <td>{{dresult["Device_CPU_GPU"]}}</td>
+                <td>{{dresult["Device_Bit"]}}</td>
+                <td>{{dresult["screenSpecs"]}}</td>
+                <td>{{dresult["Device_Grade"]}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
